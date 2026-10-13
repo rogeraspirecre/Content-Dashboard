@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+npm-cache/
+
+# Secrets - never commit API keys or tokens
+.env
+.env.*
+*.key
+credentials.json
+token.json
+
+# Local scratch
+scratch/
+tmp/

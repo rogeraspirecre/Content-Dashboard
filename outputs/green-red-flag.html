@@ -1,0 +1,231 @@
+<style>
+  :root {
+    --paper: #f6f4ef;
+    --card: #fffdf9;
+    --ink: #1a1b19;
+    --ink-soft: #4c534e;
+    --muted: #79817b;
+    --line: #e2ddd2;
+    --teal: #0e5f61;
+    --green: #2e7d4f;
+    --red: #bb3b32;
+    --shadow: 0 1px 2px rgba(20,25,22,.04), 0 6px 20px rgba(20,25,22,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #131513; --card: #1c1f1d; --ink: #eceae4; --ink-soft: #b4bab3;
+      --muted: #8a938c; --line: #2c302c; --teal: #4fb3a6; --green: #63c187;
+      --red: #e0776d; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.28);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #f6f4ef; --card: #fffdf9; --ink: #1a1b19; --ink-soft: #4c534e;
+    --muted: #79817b; --line: #e2ddd2; --teal: #0e5f61; --green: #2e7d4f;
+    --red: #bb3b32; --shadow: 0 1px 2px rgba(20,25,22,.04), 0 6px 20px rgba(20,25,22,.05);
+  }
+  :root[data-theme="dark"] {
+    --paper: #131513; --card: #1c1f1d; --ink: #eceae4; --ink-soft: #b4bab3;
+    --muted: #8a938c; --line: #2c302c; --teal: #4fb3a6; --green: #63c187;
+    --red: #e0776d; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.28);
+  }
+
+  * { box-sizing: border-box; }
+  .wrap {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 4vw, 3rem) clamp(1.1rem, 4vw, 2.4rem) 3rem;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .masthead { border-bottom: 1.5px solid var(--ink); padding-bottom: 1.4rem; margin-bottom: 2rem; }
+  .eyebrow {
+    font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--teal); font-weight: 700; margin: 0 0 .6rem;
+    display: flex; align-items: center; gap: .55rem;
+  }
+  .pips { display: inline-flex; gap: .3rem; }
+  .pip { width: .58rem; height: .58rem; border-radius: 50%; display: inline-block; }
+  .pip.g { background: var(--green); }
+  .pip.r { background: var(--red); }
+  h1 {
+    font-size: clamp(1.9rem, 5vw, 2.9rem); line-height: 1.02; margin: 0 0 .7rem;
+    letter-spacing: -.02em; font-weight: 800; text-wrap: balance;
+  }
+  .lede { font-size: 1.02rem; line-height: 1.55; color: var(--ink-soft); max-width: 60ch; margin: 0; }
+  .lede b { color: var(--ink); font-weight: 600; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-top: 1.3rem; }
+  .btn {
+    font: inherit; font-size: .86rem; font-weight: 600; cursor: pointer;
+    border: 1.5px solid var(--ink); background: var(--ink); color: var(--paper);
+    padding: .55rem 1.1rem; border-radius: 7px; display: inline-flex; align-items: center; gap: .5rem;
+    transition: transform .08s ease, opacity .15s ease;
+  }
+  .btn:hover { opacity: .88; }
+  .btn:active { transform: scale(.97); }
+  .btn:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+  .hint { font-size: .82rem; color: var(--muted); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 2rem; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 1.25rem 1.3rem 1.35rem; box-shadow: var(--shadow); break-inside: avoid;
+  }
+  .card h2 {
+    font-size: 1.12rem; margin: 0; letter-spacing: -.01em; font-weight: 700;
+    display: flex; align-items: baseline; justify-content: space-between; gap: .75rem;
+  }
+  .card .num {
+    font-size: .72rem; font-weight: 700; color: var(--muted);
+    font-variant-numeric: tabular-nums; letter-spacing: .04em; flex: none;
+  }
+  .card .rule { height: 2px; background: linear-gradient(90deg, var(--green) 0 50%, var(--red) 50% 100%); border-radius: 2px; margin: .7rem 0 .95rem; opacity: .85; }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+  li {
+    font-size: .92rem; line-height: 1.4; color: var(--ink-soft);
+    padding-left: 1.05rem; position: relative;
+  }
+  li::before {
+    content: ""; position: absolute; left: 0; top: .5em;
+    width: .4rem; height: .4rem; border-radius: 50%;
+    background: var(--teal); opacity: .55;
+  }
+  li b { color: var(--ink); font-weight: 600; }
+
+  footer { margin-top: 2.4rem; padding-top: 1.2rem; border-top: 1px solid var(--line); font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+  @media print {
+    .toolbar { display: none; }
+    .wrap { background: #fff; color: #000; max-width: none; padding: 0; }
+    .card { box-shadow: none; border: 1px solid #ccc; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: .6rem; }
+    h1, .card h2, li b { color: #000; }
+    .lede, li { color: #222; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow"><span class="pips"><span class="pip g"></span><span class="pip r"></span></span> Filming reference &middot; Brandon</p>
+    <h1>Job &amp; Career Green Flag / Red Flag</h1>
+    <p class="lede">What to actually look for. Brandon reacts to each signal on camera and calls it a <b>green flag</b> or a <b>red flag</b>. Open cold on the first item in each set &mdash; no intro.</p>
+    <div class="toolbar">
+      <button class="btn" onclick="window.print()" aria-label="Save or print this sheet as a PDF">Save as PDF</button>
+      <span class="hint">Opens your browser&rsquo;s print dialog &mdash; choose &ldquo;Save as PDF.&rdquo;</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2>A Job Offer <span class="num">01</span></h2>
+      <div class="rule"></div>
+      <ul>
+        <li>Pay is way <b>above market</b> for the role</li>
+        <li>They rushed you and want an answer tomorrow</li>
+        <li>They can clearly explain how you&rsquo;ll be measured</li>
+        <li>The role was &ldquo;created just for you&rdquo;</li>
+        <li>Everyone you&rsquo;d work with seems checked out</li>
+        <li>The person who&rsquo;d manage you is genuinely impressive</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>The Interview <span class="num">02</span></h2>
+      <div class="rule"></div>
+      <ul>
+        <li>They can&rsquo;t tell you <b>why the last person left</b></li>
+        <li>The owner interviews you personally</li>
+        <li>They ghost you two weeks, then rush</li>
+        <li>They ask about results, not years of experience</li>
+        <li>Three rounds for an entry-level job</li>
+        <li>They keep selling &ldquo;we&rsquo;re like a family&rdquo;</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Your Boss <span class="num">03</span></h2>
+      <div class="rule"></div>
+      <ul>
+        <li><b>Takes credit</b> for your work</li>
+        <li>Still does the hardest jobs themselves</li>
+        <li>Only gives feedback at review time</li>
+        <li>Protects their people from the higher-ups</li>
+        <li>Changes direction every week</li>
+        <li>Hires people smarter than themselves</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>A Company Worth Working For <span class="num">04</span></h2>
+      <div class="rule"></div>
+      <ul>
+        <li><b>Growing and hiring</b></li>
+        <li>Constant reorgs and layoffs</li>
+        <li>The owner reinvests instead of flashing money</li>
+        <li>High turnover on your future team</li>
+        <li>Quietly profitable for years, no hype</li>
+        <li>Everyone&rsquo;s title is inflated</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>A Startup Job Offer <span class="num">05</span></h2>
+      <div class="rule"></div>
+      <ul>
+        <li><b>Big equity</b>, below-market salary</li>
+        <li>They can&rsquo;t explain how they make money</li>
+        <li>The founder has built something before</li>
+        <li>&ldquo;Pre-revenue but about to blow up&rdquo;</li>
+        <li>You&rsquo;d be employee number five</li>
+        <li>Less than a year of runway</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Your Career Path <span class="num">06</span></h2>
+      <div class="rule"></div>
+      <ul>
+        <li><b>Same title</b> for four years</li>
+        <li>You&rsquo;re the least experienced person in the room</li>
+        <li>Your skills would transfer anywhere</li>
+        <li>Your entire income depends on one company</li>
+        <li>You&rsquo;re bored but comfortable</li>
+        <li>You&rsquo;re learning faster than you&rsquo;re earning</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>A Remote Job <span class="num">07</span></h2>
+      <div class="rule"></div>
+      <ul>
+        <li><b>Fully remote</b>, US, at top dollar</li>
+        <li>Clear outcomes, not hours watched</li>
+        <li>&ldquo;We&rsquo;ll figure out your role as we go&rdquo;</li>
+        <li>The whole team has never met in person</li>
+        <li>They measure what you produce</li>
+        <li>Nonstop &ldquo;quick calls&rdquo; all day</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Your Industry <span class="num">08</span></h2>
+      <div class="rule"></div>
+      <ul>
+        <li><b>AI can already do</b> the entry-level version</li>
+        <li>People will always need it done in person</li>
+        <li>It&rsquo;s consolidating into a few big players</li>
+        <li>High demand, not enough skilled people</li>
+        <li>It&rsquo;s &ldquo;hot&rdquo; and everyone&rsquo;s rushing in</li>
+        <li>Nobody young wants to do it anymore</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer>
+    Eight sets, six signals each. The insider read: an employer telling you what actually matters &mdash; which is exactly why viewers grade their own job while they watch. Judge each on views; the format does the sharing for you.
+  </footer>
+</div>
