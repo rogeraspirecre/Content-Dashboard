@@ -46,7 +46,8 @@ def main():
             hits.append((s, "POSTED", (r.get("Title") or "").strip().replace("\r", " "),
                          f"{(r.get('Views') or '').strip()} views, {(r.get('Date Posted') or '').strip()}"))
 
-    for f in glob.glob(os.path.join(PKG, "*.md")):
+    extra = glob.glob(os.path.join(BASE, "outputs", "*.md"))  # cut lists, one-offs
+    for f in glob.glob(os.path.join(PKG, "*.md")) + extra:
         txt = open(f, encoding="utf-8").read()
         m = re.search(r"## YouTube description\n(.*?)\nSubscribe for more", txt, re.S)
         s = score(g, grams(m.group(1) if m else txt))

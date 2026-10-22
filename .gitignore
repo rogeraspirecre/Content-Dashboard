@@ -26,3 +26,8 @@ tmp/
 db/*.db
 db/*.db-wal
 db/*.db-shm
+
+# Next.js build output and local env
+web/.next/
+web/.npm-cache/
+web/next-env.d.ts

@@ -1186,7 +1186,8 @@ Reach = item-recognition rule (recognizable to normal people). Rapport = brand d
 9. Real Estate Jobs by How HARD They Are (income axis already filmed)
 10. Every Excuse a Broker Gives You (slow market, wrong season, buyer financing, "we're getting interest")
 
-### REACH: receipts + insider numbers (11-18) — PROVEN by Williams Tower clip; verifiable numbers > opinions
+### REACH: receipts + insider numbers (11-18)
+**[FILMED Oct 2026] "Real Estate Doesn't Always Go Up" — the best receipt clip to date.** Real managed property, 12-year span, numbers verified internally consistent (~80,000 SF both years): opex $7.47/ft (2012) to $12.81/ft (2024) = +71%; one tenant renewed $16.50 gross down to $16.00 = -3%; NOI $722K to $255K; at a flat 8 cap, $9.0M to $3.2M = **$5.8M of value gone**. Pairs with the retirement ranking (RE 10 over last 20 yrs, 3 over next 20). THIS IS THE TEMPLATE — every other owner-education claim in the library wants numbers like these. — PROVEN by Williams Tower clip; verifiable numbers > opinions
 11. **Buildings That Lost Millions** (series; real comps, Williams Tower style)
 12. Guess What This Tenant Pays in Rent (McDonald's, Starbucks, nail salon, gym, dentist)
 13. What It Actually Costs to Build (parking space, elevator, drive-thru, rooftop HVAC)
