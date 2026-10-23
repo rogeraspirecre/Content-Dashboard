@@ -31,3 +31,6 @@ db/*.db-shm
 web/.next/
 web/.npm-cache/
 web/next-env.d.ts
+
+# Sheet sync backups
+second-brain/data/backups/
