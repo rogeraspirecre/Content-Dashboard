@@ -29,13 +29,34 @@ export function overlap(a: Set<string>, b: Set<string>): number {
   return hits / Math.min(a.size, b.size);
 }
 
-/** Title-level similarity, which catches "Ranking X" vs "Ranking X Pt 2" style repeats. */
+/**
+ * Title-level similarity, catching "Ranking X" vs "Ranking X Pt 2" repeats.
+ *
+ * Format scaffold words are excluded before comparing: every ranking title
+ * shares "ranking/every/best/worst/by/whether", and counting those produced
+ * false positives like "Ranking Subscriptions by Whether They're Worth It"
+ * matching "Ranking Home Features by Whether They Actually Add Value".
+ * Only the subject words decide similarity.
+ */
+const SCAFFOLD = new Set([
+  "ranking", "rank", "ranked", "every", "way", "ways", "best", "worst", "top",
+  "the", "and", "you", "your", "they", "them", "their", "that", "this", "with",
+  "for", "from", "how", "what", "why", "who", "which", "whether", "actually",
+  "really", "thing", "things", "tier", "list", "versus", "pt", "part", "most",
+  "make", "makes", "made", "get", "gets", "money", "real", "estate",
+]);
+
 export function titleSimilarity(a: string, b: string): number {
-  const wa = new Set(norm(a).split(" ").filter((w) => w.length > 2));
-  const wb = new Set(norm(b).split(" ").filter((w) => w.length > 2));
-  if (!wa.size || !wb.size) return 0;
+  const subject = (t: string) =>
+    new Set(norm(t).split(" ").filter((w) => w.length > 2 && !SCAFFOLD.has(w)));
+  const wa = subject(a);
+  const wb = subject(b);
+  // Fewer than two subject words left means there's nothing real to compare.
+  if (wa.size < 2 || wb.size < 2) return 0;
   let hits = 0;
   for (const w of wa) if (wb.has(w)) hits++;
+  // One shared word ("fire", "rich") is coincidence, not similarity.
+  if (hits < 2) return 0;
   return hits / Math.min(wa.size, wb.size);
 }
 
@@ -51,8 +72,8 @@ export type Verdict = {
 
 /**
  * Judge one generated idea against everything that exists.
- *  >= 0.60 title overlap, or >= 0.35 body overlap: it's a repeat, drop it.
- *  >= 0.40 title overlap: close enough to flag for a human.
+ *  >= 0.75 subject-word title overlap, or >= 0.35 body overlap: drop it.
+ *  >= 0.50 title overlap: keep it, flagged for a human look.
  */
 export function judge(
   idea: { title: string; body: string },
@@ -68,16 +89,16 @@ export function judge(
     if (score <= worst.score) continue;
 
     worst = {
-      keep: !(t >= 0.6 || b >= 0.35),
+      keep: !(t >= 0.75 || b >= 0.35),
       score: Number(score.toFixed(2)),
       match: entry.label,
       kind: entry.kind,
       reason:
-        t >= 0.6
+        t >= 0.75
           ? "title is effectively the same"
           : b >= 0.35
             ? "same argument, already covered"
-            : t >= 0.4
+            : t >= 0.5
               ? "close to an existing one, worth a look"
               : undefined,
     };

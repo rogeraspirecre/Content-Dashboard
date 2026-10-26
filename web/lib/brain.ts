@@ -67,10 +67,15 @@ export type GenerateContext = {
   topPerformers: { title: string; views: number }[];
 };
 
-/** The cached half of the prompt: voice, rules, and everything already made. */
-export function systemPrompt(ctx: GenerateContext): string {
+/**
+ * The prompt is split in two so caching survives between runs.
+ * The stable half (voice, rules, posted titles) only changes when the sheet
+ * syncs. The volatile half (the backlog) changes on every generation, because
+ * each run saves its accepted ideas back - so it lives outside the cache
+ * breakpoint instead of invalidating it.
+ */
+export function stableSystem(ctx: GenerateContext): string {
   const posted = ctx.postedTitles.map((t) => `- ${t}`).join("\n");
-  const ideas = ctx.ideaTitles.map((t) => `- ${t}`).join("\n");
   const top = ctx.topPerformers
     .map((p) => `- ${p.title}: ${p.views.toLocaleString()} views`)
     .join("\n");
@@ -89,9 +94,13 @@ ${top}
 
 ALREADY POSTED - ${ctx.postedTitles.length} videos. Never propose any of these again,
 and never propose a near-variant of one.
-${posted}
+${posted}`;
+}
 
-ALREADY IN THE BACKLOG - ${ctx.ideaTitles.length} ideas, filmed or planned. Same rule.
+export function volatileSystem(ctx: GenerateContext): string {
+  const ideas = ctx.ideaTitles.map((t) => `- ${t}`).join("\n");
+  return `ALREADY IN THE BACKLOG - ${ctx.ideaTitles.length} ideas, filmed or planned.
+Never propose any of these or a near-variant either.
 ${ideas}
 
 Every idea you return must be genuinely absent from both lists. If you are unsure

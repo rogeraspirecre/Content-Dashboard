@@ -3,7 +3,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import * as z from "zod/v4";
 import { NextRequest, NextResponse } from "next/server";
 import { postedTitles, existingIdeas, lanePerformance, saveIdeas } from "../../../lib/db";
-import { systemPrompt } from "../../../lib/brain";
+import { stableSystem, volatileSystem } from "../../../lib/brain";
 import { judge, type Corpus } from "../../../lib/dedupe";
 
 export const runtime = "nodejs";
@@ -60,11 +60,11 @@ export async function POST(req: NextRequest) {
   const existing = existingIdeas();
   const top = lanePerformance();
 
-  const system = systemPrompt({
+  const ctx = {
     postedTitles: posted,
     ideaTitles: existing.map((i) => i.title),
     topPerformers: top,
-  });
+  };
 
   const ask = [
     `Give me ${target} new video ideas.`,
@@ -82,9 +82,13 @@ export async function POST(req: NextRequest) {
     model: "claude-opus-5-5",
     max_tokens: 16000,
     thinking: { type: "adaptive" },
-    // The corpus is identical between requests, so cache it: repeat generations
-    // read the cached prefix at a fraction of the input price.
-    system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
+    // Breakpoint sits after the stable half (voice + rules + posted titles),
+    // which only changes when the sheet syncs. The backlog block after it
+    // changes every run and no longer invalidates the cache.
+    system: [
+      { type: "text", text: stableSystem(ctx), cache_control: { type: "ephemeral" } },
+      { type: "text", text: volatileSystem(ctx) },
+    ],
     messages: [{ role: "user", content: ask }],
     output_config: { format: zodOutputFormat(ResponseSchema) },
   });
