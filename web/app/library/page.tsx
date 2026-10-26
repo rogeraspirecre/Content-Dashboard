@@ -15,6 +15,7 @@ export default function LibraryPage() {
     <main className="wrap">
       <div className="head">
         <div>
+          <p className="kicker">Everything, in one place</p>
           <h1>Library</h1>
           <p>Every video, transcript and package in one place.</p>
         </div>

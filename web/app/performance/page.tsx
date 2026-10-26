@@ -19,6 +19,7 @@ export default function PerformancePage() {
     <main className="wrap">
       <div className="head">
         <div>
+          <p className="kicker">What the data says</p>
           <h1>Performance</h1>
           <p>What the view data says to film next.</p>
         </div>

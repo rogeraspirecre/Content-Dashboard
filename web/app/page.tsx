@@ -101,24 +101,11 @@ export default function Page() {
     <main className="wrap">
       <div className="head">
         <div>
+          <p className="kicker">Client focused. Content driven.</p>
           <h1>Generate ideas</h1>
           <p>
-            Every idea is checked against all 274 posted videos and the backlog before you
-            see it.
+            Every idea is checked against the full library and the backlog before you see it.
           </p>
-        </div>
-        <div className="brandmark">
-          <div className="m" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M11 2 2 22h4.4l1.9-4.6h2.4L11 2Zm2 0 9 20h-4.4l-7-20h2.4Z" />
-            </svg>
-          </div>
-          <div>
-            <strong style={{ fontFamily: "var(--display)", fontSize: 14 }}>
-              Content Console
-            </strong>
-            <div style={{ fontSize: 11, color: "var(--ink-3)" }}>Aspire CRE</div>
-          </div>
         </div>
       </div>
 

@@ -91,3 +91,50 @@ No 1M+ breakout in July (April had 8.2M). Median health recovered; next lever is
 - ~50% ranking/tier-list formats on broad money/career/business topics (reach)
 - ~25% CRE takes transplanted into proven formats (reach + relevance)
 - ~25% pure niche CRE (funnel/authority) — accept lower views, judge on leads not reach
+
+---
+
+## Finding 8 (Oct 2026): the mix has drifted into the lowest-ceiling lane
+
+Measured on 414 posted videos with dates, after syncing the live sheet.
+
+**Last 90 days: 174 posts.**
+
+| Format | Posts | Median views |
+|---|---|---|
+| Single-point clip ("other") | 112 | **1,980** |
+| Explainer | 22 | 1,747 |
+| Question | 18 | 2,443 |
+| **Ranking** | **13** | **19,724** |
+| Versus | 6 | 1,384 |
+| Green/red flag | 3 | 3,426 |
+
+| Lane | Posts | Median views |
+|---|---|---|
+| Broad money/career | 21 | **13,251** |
+| RE / owner education | 70 | 1,761 |
+| Other | 83 | 2,099 |
+
+**Rankings are 7.5% of output and carry 10x the median of everything else.**
+Every one of the top 15 videos in the window is broad money/career. The best
+RE clip in 90 days doesn't crack that list.
+
+**October is the clearest case.** The twenty most recent posts land between 650
+and 4,181 views. They are almost all single-point real estate clips cut from
+long interviews. August, by contrast, produced 515K, 163K, 95K, 50K and 46K -
+all rankings or tier lists in the broad lane.
+
+**Formats that are working and underproduced:**
+- Tier lists: Money Habits Tier List 28,761; Best Cities For Business Tier List 34,744
+- Head-to-head: Career Head to Head 38,324; Which College Degree Actually Wins 95,514
+- Pt. 2 and Pt. 3 of proven rankings: Which Job Makes You a Millionaire Pt. 3 at 515,136
+
+**What this means for the system, including Claude:**
+Packaging whatever transcript arrives is not neutral. Nearly every clip pasted in
+during October was a 1-4K piece, and packaging each one well still produced a month
+with a median under 2K. The job is not only to write captions for what was filmed;
+it is to say when the mix is wrong and name what to film instead.
+
+**Target mix:** at least one ranking, tier list or head-to-head in the broad money
+and career lane for every three single-point clips. The RE one-pointers are useful
+for clients and ads; they are not a growth engine and should not be the daily default.

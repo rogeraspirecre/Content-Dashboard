@@ -12,6 +12,7 @@ export default function IdeasPage() {
     <main className="wrap">
       <div className="head">
         <div>
+          <p className="kicker">The backlog</p>
           <h1>Ideas</h1>
           <p>
             The backlog. Filmed items keep their verdicts so nothing gets graded
