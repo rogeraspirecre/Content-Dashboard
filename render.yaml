@@ -1,0 +1,26 @@
+# Render blueprint for the Aspire Content Console.
+# New > Blueprint in the Render dashboard, point it at this repo, done.
+services:
+  - type: web
+    name: aspire-content-console
+    runtime: node
+    plan: starter # persistent disks need a paid instance; starter is the cheapest
+    rootDir: web
+    buildCommand: npm install && npm run build
+    startCommand: bash render-start.sh
+    healthCheckPath: /
+    disk:
+      name: aspire-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false # entered once in the Render dashboard, never in git
+      - key: APP_PASSWORD
+        sync: false # the password the browser asks for; pick anything
+      - key: DB_PATH
+        value: /var/data/db/brandon.db
+      - key: CONTENT_ROOT
+        value: /var/data/content
+      - key: NODE_VERSION
+        value: "22"

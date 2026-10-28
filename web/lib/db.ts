@@ -2,7 +2,9 @@ import Database from "better-sqlite3";
 import path from "path";
 
 // The database lives one level up, beside the markdown second brain.
-const DB_PATH = path.join(process.cwd(), "..", "db", "brandon.db");
+// On Render, DB_PATH points at the persistent disk instead.
+const DB_PATH =
+  process.env.DB_PATH ?? path.join(process.cwd(), "..", "db", "brandon.db");
 
 let db: Database.Database | null = null;
 
@@ -134,6 +136,45 @@ export function ideaRows(status?: string): IdeaRow[] {
             WHERE client_id = ? ORDER BY id DESC LIMIT 300`
         )
         .all(ASPIRE) as IdeaRow[]);
+}
+
+export type PackageRow = {
+  id: number;
+  slug: string;
+  best_title: string | null;
+  created_at: string;
+  video_title: string | null;
+  video_status: string | null;
+};
+
+export function recentPackages(limit = 8): PackageRow[] {
+  return getDb()
+    .prepare(
+      `SELECT p.id, p.slug, p.best_title, p.created_at,
+              v.title AS video_title, v.status AS video_status
+         FROM packages p
+         LEFT JOIN videos v ON v.id = p.video_id
+        WHERE p.client_id = ?
+        ORDER BY p.created_at DESC, p.id DESC
+        LIMIT ?`
+    )
+    .all(ASPIRE, limit) as PackageRow[];
+}
+
+/** Filmed videos that already have a package: the ready-to-post queue. */
+export function readyToPost(limit = 10): VideoRow[] {
+  return getDb()
+    .prepare(
+      `SELECT v.id, v.title, v.status, v.lane, v.format, v.posted_at,
+              NULL AS views,
+              (SELECT p.slug FROM packages p WHERE p.video_id = v.id LIMIT 1) AS package_slug
+         FROM videos v
+        WHERE v.client_id = ? AND v.status = 'filmed'
+          AND EXISTS (SELECT 1 FROM packages p WHERE p.video_id = v.id)
+        ORDER BY v.id DESC
+        LIMIT ?`
+    )
+    .all(ASPIRE, limit) as VideoRow[];
 }
 
 /** Median is the honest centre for view data; the mean is distorted by the 1M+ outliers. */

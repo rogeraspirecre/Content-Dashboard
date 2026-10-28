@@ -26,6 +26,8 @@ tmp/
 db/*.db
 db/*.db-wal
 db/*.db-shm
+# ...except the library itself: Render seeds its persistent disk from this copy
+!db/brandon.db
 
 # Next.js build output and local env
 web/.next/
@@ -34,3 +36,4 @@ web/next-env.d.ts
 
 # Sheet sync backups
 second-brain/data/backups/
+web/tsconfig.tsbuildinfo

@@ -1,217 +1,166 @@
-"use client";
+import Link from "next/link";
+import {
+  libraryCounts,
+  performance as perf,
+  recentPackages,
+  readyToPost,
+} from "../lib/db";
 
-import { useState } from "react";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
-type Verdict = { keep: boolean; score: number; match?: string; kind?: string; reason?: string };
-type Idea = {
-  title: string;
-  format: string;
-  lane: string;
-  bullets: string[];
-  why: string;
-  verdict: Verdict;
-};
-type Result = {
-  batch: string;
-  generated: number;
-  kept: Idea[];
-  dropped: Idea[];
-  checkedAgainst: { posted: number; backlog: number };
-  usage: { input: number; cached: number; output: number };
-  error?: string;
-};
-
-const LANES = [
-  ["", "Any lane"],
-  ["broad_money", "Broad money and career"],
-  ["re_ranking", "Real estate ranking"],
-  ["green_red", "Green flag / red flag"],
-  ["owner_education", "Owner education"],
-  ["rapport", "Rapport"],
-  ["tax", "Tax"],
-];
-
-const FORMATS = [
-  ["", "Any format"],
-  ["ranking", "Ranking"],
-  ["rapid_fire", "Rapid fire"],
-  ["green_red_flag", "Green / red flag"],
-  ["qa", "Q&A"],
-  ["explainer", "Explainer"],
-  ["this_or_that", "This or that"],
-  ["overrated_underrated", "Overrated / underrated"],
-  ["insider_numbers", "Insider numbers"],
-  ["story", "Story"],
-];
-
-function IdeaCard({ idea, dropped }: { idea: Idea; dropped?: boolean }) {
-  const near = !dropped && idea.verdict?.reason;
-  return (
-    <article className={`idea${dropped ? " dropped" : ""}`}>
-      <h3>{idea.title}</h3>
-      <div className="tags">
-        <span className="tag lane">{idea.lane.replace(/_/g, " ")}</span>
-        <span className="tag">{idea.format.replace(/_/g, " ")}</span>
-        {near && <span className="tag near">{idea.verdict.reason}</span>}
-        {dropped && (
-          <span className="tag near">
-            {idea.verdict.reason} &middot; {idea.verdict.match}
-          </span>
-        )}
-      </div>
-      <ol>
-        {idea.bullets.map((b, i) => (
-          <li key={i}>{b}</li>
-        ))}
-      </ol>
-      {idea.why && <p className="why">{idea.why}</p>}
-    </article>
-  );
+function compact(n: number) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(2).replace(/\.00$/, "") + "M";
+  if (n >= 1_000) return Math.round(n / 1_000) + "K";
+  return String(n);
 }
 
-export default function Page() {
-  const [count, setCount] = useState(10);
-  const [lane, setLane] = useState("");
-  const [format, setFormat] = useState("");
-  const [brief, setBrief] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [result, setResult] = useState<Result | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  async function generate() {
-    setBusy(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/ideas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count, lane, format, brief }),
-      });
-      const data = await res.json();
-      if (!res.ok) setError(data.error ?? "Something went wrong.");
-      else setResult(data);
-    } catch (e: any) {
-      setError(e.message ?? "Request failed.");
-    } finally {
-      setBusy(false);
-    }
-  }
+export default function DashboardPage() {
+  const c = libraryCounts();
+  const p = perf();
+  const packages = recentPackages(6);
+  const ready = readyToPost(8);
+  const top = p.top.slice(0, 6);
+  const max = top[0]?.views ?? 1;
+  const today = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <main className="wrap">
       <div className="head">
         <div>
-          <p className="kicker">Client focused. Content driven.</p>
-          <h1>Generate ideas</h1>
-          <p>
-            Every idea is checked against the full library and the backlog before you see it.
-          </p>
+          <p className="kicker">{today}</p>
+          <h1>Dashboard</h1>
+          <p>The whole operation at a glance: what&rsquo;s ready, what&rsquo;s working, what&rsquo;s next.</p>
+        </div>
+        <div className="actions">
+          <Link href="/suite" className="btn as-link">Package a transcript</Link>
+          <Link href="/generate" className="btn ghost as-link">Generate ideas</Link>
         </div>
       </div>
 
-      <section className="panel">
-        <div className="ph">
-          <h2>What do you want</h2>
-          <span className="meta">Opus 5.5</span>
+      <div className="stats-grid">
+        <div className="stat">
+          <div className="k">Posted</div>
+          <div className="v">{c.posted}</div>
+          <div className="s">of {c.videos} videos tracked</div>
         </div>
-        <div className="pb">
-          <div className="controls">
-            <select
-              value={count}
-              onChange={(e) => setCount(Number(e.target.value))}
-              aria-label="How many ideas"
-            >
-              {[5, 10, 15, 20, 30].map((n) => (
-                <option key={n} value={n}>
-                  {n} ideas
-                </option>
-              ))}
-            </select>
-            <select value={lane} onChange={(e) => setLane(e.target.value)} aria-label="Lane">
-              {LANES.map(([v, l]) => (
-                <option key={v} value={v}>
-                  {l}
-                </option>
-              ))}
-            </select>
-            <select
-              value={format}
-              onChange={(e) => setFormat(e.target.value)}
-              aria-label="Format"
-            >
-              {FORMATS.map(([v, l]) => (
-                <option key={v} value={v}>
-                  {l}
-                </option>
-              ))}
-            </select>
-            <button className="btn" onClick={generate} disabled={busy}>
-              {busy ? "Thinking..." : "Generate"}
-            </button>
+        <div className="stat">
+          <div className="k">Median views</div>
+          <div className="v">{compact(p.median)}</div>
+          <div className="s">across all posted</div>
+        </div>
+        <div className="stat flag">
+          <div className="k">Ready to post</div>
+          <div className="v">{ready.length}</div>
+          <div className="s">filmed, package written</div>
+        </div>
+        <div className="stat">
+          <div className="k">Open ideas</div>
+          <div className="v">{c.openIdeas}</div>
+          <div className="s">in the backlog</div>
+        </div>
+      </div>
+
+      <div className="grid2">
+        <section className="panel">
+          <div className="ph">
+            <h2>Ready to post</h2>
+            <span className="meta">filmed + packaged</span>
           </div>
-          <textarea
-            style={{ marginTop: 10 }}
-            placeholder="Anything specific? e.g. we're filming at a smash room, or lean into tax"
-            value={brief}
-            onChange={(e) => setBrief(e.target.value)}
-          />
-          <p className="hint" style={{ marginTop: 8 }}>
-            Bullets come back ordered by broad appeal and contrarian potential. The first
-            bullet is the cold open.
-          </p>
-          {error && (
-            <p className="err" style={{ marginTop: 12 }}>
-              {error}
+          <div className="pb scroll">
+            {ready.length === 0 ? (
+              <p className="hint">Nothing in the queue. Paste a transcript into Full suite.</p>
+            ) : (
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Package</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ready.map((r) => (
+                    <tr key={r.id}>
+                      <td className="t">{r.title}</td>
+                      <td>
+                        <span className="pill filmed">{r.package_slug ?? "ready"}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="ph">
+            <h2>Top performers</h2>
+            <span className="meta">views</span>
+          </div>
+          <div className="pb">
+            <div className="bars">
+              {top.map((t) => (
+                <div className="bar" key={t.title}>
+                  <span className="lab">{t.title}</span>
+                  <span className="val">{compact(t.views)}</span>
+                  <span className="track">
+                    <span
+                      className="fill"
+                      style={{ width: `${Math.max(2, (t.views / max) * 100)}%` }}
+                    />
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="note">
+              Rankings with recognizable items carry roughly 10&times; the median. When a
+              slot opens, that&rsquo;s the format to reach for.
             </p>
-          )}
+          </div>
+        </section>
+      </div>
+
+      <section className="panel" style={{ marginTop: 16 }}>
+        <div className="ph">
+          <h2>Latest packages</h2>
+          <span className="meta">{c.packages} total</span>
+        </div>
+        <div className="pb scroll">
+          <table className="tbl">
+            <thead>
+              <tr>
+                <th>Best title</th>
+                <th>Slug</th>
+                <th>Status</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {packages.map((pk) => (
+                <tr key={pk.id}>
+                  <td className="t">{pk.best_title ?? pk.video_title ?? pk.slug}</td>
+                  <td className="num">{pk.slug}</td>
+                  <td>
+                    <span
+                      className={
+                        pk.video_status === "posted" ? "pill posted" : "pill filmed"
+                      }
+                    >
+                      {pk.video_status ?? "—"}
+                    </span>
+                  </td>
+                  <td className="num">{pk.created_at.slice(0, 10)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
-
-      {result && (
-        <>
-          <div className="head" style={{ marginTop: 28 }}>
-            <div>
-              <h1 style={{ fontSize: 17 }}>
-                {result.kept.length} new {result.kept.length === 1 ? "idea" : "ideas"}
-              </h1>
-              <p>
-                Saved to the backlog as &ldquo;{result.batch}&rdquo;. Checked against{" "}
-                {result.checkedAgainst.posted} posted videos and{" "}
-                {result.checkedAgainst.backlog} existing ideas.
-              </p>
-            </div>
-          </div>
-          {result.kept.map((idea, i) => (
-            <IdeaCard key={i} idea={idea} />
-          ))}
-
-          {result.dropped.length > 0 && (
-            <>
-              <div className="head" style={{ marginTop: 28 }}>
-                <div>
-                  <h1 style={{ fontSize: 17 }}>
-                    {result.dropped.length} dropped as repeats
-                  </h1>
-                  <p>These matched something already posted or already in the backlog.</p>
-                </div>
-              </div>
-              {result.dropped.map((idea, i) => (
-                <IdeaCard key={i} idea={idea} dropped />
-              ))}
-            </>
-          )}
-
-          <div className="stats">
-            <span>Generated {result.generated}</span>
-            <span>Kept {result.kept.length}</span>
-            <span>Dropped {result.dropped.length}</span>
-            <span className="num">
-              {result.usage.cached.toLocaleString()} cached tokens read
-            </span>
-            <span className="num">{result.usage.output.toLocaleString()} output tokens</span>
-          </div>
-        </>
-      )}
     </main>
   );
 }
